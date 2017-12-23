@@ -1,30 +1,10 @@
 import cv2
 import numpy as np
 import math
+import json
 
-colors_arr = [
-    {
-        "type": "red",
-        "colors": {
-            "min": [164, 119, 67],
-            "max": [184, 139, 87]
-        }
-    },
-    {
-        "type": "yellow",
-        "colors": {
-            "min": [8, 183, 114],
-            "max": [28, 203, 134]
-        }
-    },
-    {
-        "type": "green",
-        "colors": {
-            "min": [70, 93, 53],
-            "max": [100, 113, 73]
-        }
-    }
-]
+colors_arr = json.load(open('config/colors_config.json'))
+print(colors_arr)
 positions = []
 sqrt_mass = []
 trans = np.array([[0, 0], [1080, 1920]], dtype='float32')
@@ -72,28 +52,20 @@ def get_colors(rect: np.ndarray, colors) -> list:
     height = rect.shape[0]
     width = rect.shape[1]
     for i in range(2):
-        top = height * i + height // 4
-        bottom = height * (i + 1) - height // 4
+        top = height // 2 * i + height // 8
+        bottom = height // 2 * (i + 1) - height // 8
         for j in range(2):
-            left = width * j + width // 4
-            right = width * (j + 1) - width // 4
+            left = width // 2 * j + width // 8
+            right = width // 2 * (j + 1) - width // 8
             color_mat = rect[top:bottom, left:right]
-            print("_______")
-            print(color_mat)
-            print("-------")
             color_mat = [
                 color_mat[0].mean(),
                 color_mat[1].mean(),
                 color_mat[2].mean()
             ]
-            print(color_mat)
-            print("_______")
             for color in colors:
                 min_colors = color["colors"]["min"]
                 max_colors = color["colors"]["max"]
-                print(min_colors)
-                print(max_colors)
-                print(color_mat)
 
                 if (
                         min_colors[0] < color_mat[0] < max_colors[0] and
@@ -164,15 +136,17 @@ def main():
     cv2.namedWindow('Persp', cv2.WINDOW_KEEPRATIO)
     cv2.namedWindow('Cont_Persp', cv2.WINDOW_KEEPRATIO)
 
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     cv2.setMouseCallback("Pich", on_mouse_click)
 
-    while cap.isOpened():
-        image = cap.read()[1]
+    # while cap.isOpened():
+    while True:
+        # image = cap.read()[1]
+        image = cv2.imread("picture.jpg")
 
         handle_image(image)
 
-        key = cv2.waitKey(1)
+        key = cv2.waitKey(100) & 0xFF
         if key == ord('q'):
             break
 

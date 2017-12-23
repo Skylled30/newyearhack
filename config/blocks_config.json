@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "type": "Road",
+    "resource": "road.png",
+    "colors": [
+      "red", "red", "green", "green"
+    ]
+  },
+  {
+    "id": 1,
+    "type": "Tree",
+    "resource": "tree.png",
+    "colors": [
+      "green", "green", "yellow", "yellow"
+    ]
+  }
+]
