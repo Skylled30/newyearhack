@@ -4,10 +4,22 @@ import math
 import json
 
 colors_arr = json.load(open('config/colors_config.json'))
+blocks_arr = json.load(open('config/blocks_config.json'))
 print(colors_arr)
 positions = []
 sqrt_mass = []
 trans = np.array([[0, 0], [1080, 1920]], dtype='float32')
+
+
+def are_eq(a: list, b: list) -> bool:
+    return sorted(a) == sorted(b)
+
+
+def check_block(block: list, blocks_cfg: list) -> (int, str):
+    for blc in blocks_cfg:
+        if are_eq(blc["colors"], block):
+            return int(blc["id"]), blc["type"]
+    return -1, ""
 
 
 def on_mouse_click(event, x, y, flags, param):
@@ -80,6 +92,7 @@ def get_colors(rect: np.ndarray, colors) -> list:
 
 def handle_image(image: np.ndarray):
     global colors_arr
+    global blocks_arr
     succeed, img_persp = transform_image(image, positions)
 
     if succeed:
@@ -113,7 +126,8 @@ def handle_image(image: np.ndarray):
                     rect = cv2.cvtColor(img_persp[top:bottom, left:right], cv2.COLOR_BGR2HSV)
 
                     colors = get_colors(rect, colors_arr)
-                    print(i, j, colors)
+                    bid, btype = check_block(colors, blocks_arr)
+                    print(i, j, bid, btype)
 
                 cv2.line(img_persp, (i * (square_length + space_length), 0),
                          (i * (square_length + space_length), max_height), (0, 255, 0), 3)
